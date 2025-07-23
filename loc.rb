@@ -33,10 +33,13 @@ client = Octokit::Client.new access_token: ENV['GITHUB_TOKEN']
 client.auto_paginate = true
 
 begin
-  repos = client.organization_repositories(ARGV[0].strip, type: 'sources')
+  all_repos = client.organization_repositories(ARGV[0].strip, type: 'sources')
 rescue StandardError
-  repos = client.repositories(ARGV[0].strip, type: 'sources')
+  all_repos = client.repositories(ARGV[0].strip, type: 'sources')
 end
+
+repos = all_repos.reject(&:archived)
+
 puts "Found #{repos.count} repos. Counting..."
 
 reports = []
